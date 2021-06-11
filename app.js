@@ -79,17 +79,16 @@ class Store{
         });
     }
 
-    static removeBook(isbn){
-        const books = Store.getBooks();
-        books.forEach(function(book, index){
-            if(book.bookIsbn === isbn){
-                // remove from local storage
-                books.splice(index, 1);
-            }
-        });
+    static removeBook(title){
+      const books = Store.getBooks();
+      books.forEach(function(book, index){
+          if(book.bookTitle === title){
+              //remove book object from local storage
+              books.splice(index, 1);
+          }
+      });
 
-        //add new book to local storage
-        localStorage.setItem('books', JSON.stringify(books));
+      localStorage.setItem('books', JSON.stringify(books));
     }
 }
 
@@ -138,7 +137,7 @@ list.addEventListener('click', function (e) {
     ui.deleteBook(e.target);
 
     //delete from local stroage
-    Store.removeBook(e.target.parentElement.previousElementSibling.textContent)
+    Store.removeBook(e.target.parentElement.parentElement.firstElementChild.textContent)
 
     //book removed msg
     ui.showAlert('Book Removed!', 'success');
