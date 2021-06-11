@@ -53,6 +53,49 @@ class UI {
 
 }
 
+class Store{
+    static getBooks(){
+        let books;
+        if(localStorage.getItem('books') === null){
+            books = [];
+        }else{
+            books = JSON.parse(localStorage.getItem('books'));
+        }
+
+        return books;
+    }
+
+    static addBooks(book){
+        const books = Store.getBooks();
+        books.push(book);
+        localStorage.setItem('books', JSON.stringify(books));
+    }
+
+    static displayBooks(){
+        const books = Store.getBooks();
+        books.forEach(function(book){
+            const ui = new UI;
+            ui.addBookToList(book);
+        });
+    }
+
+    static removeBook(isbn){
+        const books = Store.getBooks();
+        books.forEach(function(book, index){
+            if(book.bookIsbn === isbn){
+                // remove from local storage
+                books.splice(index, 1);
+            }
+        });
+
+        //add new book to local storage
+        localStorage.setItem('books', JSON.stringify(books));
+    }
+}
+
+//Dom load Event
+document.addEventListener('DOMContentLoaded', Store.displayBooks)
+
 // Code Module
 formValue.addEventListener('submit', function (e) {
     //form variable
@@ -74,6 +117,9 @@ formValue.addEventListener('submit', function (e) {
         //add book to list
         ui.addBookToList(book)
 
+        //Add to local stroage
+        Store.addBooks(book);
+
         //clear all form field
         ui.clearField();
     }
@@ -90,6 +136,9 @@ list.addEventListener('click', function (e) {
     const ui = new UI();
     //delete book
     ui.deleteBook(e.target);
+
+    //delete from local stroage
+    Store.removeBook(e.target.parentElement.previousElementSibling.textContent)
 
     //book removed msg
     ui.showAlert('Book Removed!', 'success');
